@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopee Price Tracker - Soi Giá Thật</title>
+  <style>
+    body {
+      width: 350px;
+      margin: 0;
+      padding: 14px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      user-select: none;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ea580c;
+    }
+
+    .admin-badge {
+      display: none;
+      font-size: 10px;
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      border: 1px solid #fca5a5;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: #fff7ed;
+      color: #ea580c;
+      border-color: #fdba74;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 7px 9px;
+      font-size: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      outline: none;
+      background: #ffffff;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    select:focus {
+      border-color: #ea580c;
+    }
+
+    .help-hint {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    }
+
+    .btn.btn-outline {
+      background: #fff7ed;
+      color: #ea580c;
+      border: 1px solid #fdba74;
+    }
+
+    .btn.btn-outline:hover {
+      background: #ffedd5;
+    }
+
+    .btn.btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn.btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    #status,
+    #statusSettings {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #059669;
+      text-align: center;
+      min-height: 16px;
+      font-weight: 600;
+    }
+
+    .watchlist-empty {
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      padding: 24px 10px;
+      line-height: 1.6;
+    }
+
+    .watch-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid #fed7aa;
+      border-radius: 6px;
+      margin-bottom: 7px;
+      background: #fffaf5;
+    }
+
+    .watch-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .watch-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1e293b;
+      text-decoration: none;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .watch-title:hover {
+      color: #ea580c;
+    }
+
+    .watch-price-row {
+      display: flex;
+      gap: 8px;
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    .watch-price {
+      color: #059669;
+      font-weight: 700;
+    }
+
+    .watch-target {
+      color: #ea580c;
+      font-weight: 600;
+    }
+
+    .remove-btn {
+      border: none;
+      background: #fee2e2;
+      color: #dc2626;
+      border-radius: 4px;
+      padding: 4px 7px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background: #fecaca;
+    }
+
+    /* Modal nhập PIN Admin bí mật */
+    .pin-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pin-modal {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      width: 260px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .pin-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="title-wrap" id="adminSecretTrigger" title="Nhấn 5 lần để mở khóa Admin">
+      <div class="title">⚡ TeaZ Shopee - Soi Giá Thật</div>
+      <span class="admin-badge" id="adminBadge">ADMIN</span>
+    </div>
+    <span style="font-size: 11px; color: #94a3b8;">v1.5.0</span>
+  </div>
+
+  <div class="tabs">
+    <!-- Tab công khai cho người dùng bình thường -->
+    <button class="tab-btn active" data-tab="watchlist">🔔 Đang canh (<span id="watchCount">0</span>)</button>
+    <button class="tab-btn" data-tab="settings">⚙️ Cài đặt</button>
+
+    <!-- Tab quản trị viên (ẨN MẶC ĐỊNH, CHỈ ADMIN MỞ KHÓA MỚI THẤY) -->
+    <button class="tab-btn" id="tab-btn-affiliate" data-tab="affiliate" style="display: none;">🔒 Affiliate</button>
+  </div>
+
+  <!-- TAB 1: DANH SÁCH SẢN PHẨM CANH GIÁ (NGƯỜI DÙNG) -->
+  <div id="tab-watchlist" class="tab-panel active">
+    <div id="watchlistContainer"></div>
+  </div>
+
+  <!-- TAB 2: CÀI ĐẶT CÔNG KHAI (NGƯỜI DÙNG) -->
+  <div id="tab-settings" class="tab-panel">
+    <div class="toggle-row">
+      <span>Hiển thị Widget soi giá trên Shopee</span>
+      <input type="checkbox" id="enabled" checked />
+    </div>
+
+    <div class="toggle-row">
+      <span>Bật thông báo khi giá giảm về đáy</span>
+      <input type="checkbox" id="notifEnabled" checked />
+    </div>
+
+    <div
+      style="font-size: 12px; color: #64748b; line-height: 1.5; margin-top: 14px; background: #f8fafc; padding: 10px; border-radius: 6px;">
+      💡 <b>Cách dùng:</b> Truy cập trang bất kỳ trên Shopee, tiện ích sẽ tự động vẽ biểu đồ lịch sử giá 30/90 ngày và
+      phát hiện shop tăng giá ảo trước đợt sale.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="saveSettingsBtn">Lưu Cài Đặt</button>
+    </div>
+    <div id="statusSettings"></div>
+  </div>
+
+  <!-- TAB 3: CẤU HÌNH TIẾP THỊ LIÊN KẾT (DÀNH RIÊNG CHO ADMIN) -->
+  <div id="tab-affiliate" class="tab-panel">
+    <div
+      style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; color: #9f1239;">
+      🛡️ <b>Khu vực Quản Trị Viên:</b> Toàn bộ doanh số & hoa hồng từ người dùng cài đặt extension sẽ được tính về tài
+      khoản bên dưới.
+    </div>
+
+    <div class="field">
+      <label for="affiliateType">Nền tảng Tiếp Thị</label>
+      <select id="affiliateType">
+        <option value="shopee_direct">Shopee Affiliate Trực Tiếp (Khuyên dùng)</option>
+        <option value="accesstrade">Accesstrade Deeplink</option>
+        <option value="custom_url">Link Chuyển Hướng Riêng (Custom URL / Server)</option>
+      </select>
+      <div class="help-hint" id="affiliateHint">Gắn trực tiếp tracking của Shopee Affiliate vào link sản phẩm, mở thẳng
+        Shopee không sợ bị chặn firewall.</div>
+    </div>
+
+    <!-- Cho Shopee Affiliate trực tiếp -->
+    <div class="field" id="field-shopeeId">
+      <label for="shopeeAffiliateId">Mã Đối Tác Shopee (Partner ID / an_...)</label>
+      <input type="text" id="shopeeAffiliateId" placeholder="Ví dụ: 17399980696 hoặc mã ID của bạn" />
+      <div class="help-hint">Lấy trong trang quản trị Shopee Affiliate của bạn.</div>
+    </div>
+
+    <!-- Cho Accesstrade -->
+    <div class="field" id="field-accesstrade" style="display: none;">
+      <label for="accesstradeBaseUrl">Accesstrade Deeplink Prefix</label>
+      <input type="text" id="accesstradeBaseUrl" placeholder="https://go.isclix.com/deep_link/..." />
+    </div>
+
+    <!-- Cho Custom URL -->
+    <div class="field" id="field-custom" style="display: none;">
+      <label for="customRedirectUrl">URL Redirect Riêng Của Bạn</label>
+      <input type="text" id="customRedirectUrl" placeholder="http://localhost:5000/s" />
+    </div>
+
+    <div class="field">
+      <label for="affiliateSubId">Sub-ID Chiến Dịch</label>
+      <input type="text" id="affiliateSubId" placeholder="chrome_ext" />
+    </div>
+
+    <div class="field">
+      <label for="apiUrl">Backend API Server</label>
+      <input type="text" id="apiUrl" placeholder="http://localhost:5000/api/track" />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" id="previewBtn">Kiểm tra link</button>
+      <button class="btn" id="saveAffiliateBtn">Lưu Cấu Hình</button>
+    </div>
+    <div class="btn-row" style="margin-top: 6px;">
+      <button class="btn btn-secondary" id="lockAdminBtn">🔒 Khóa Quyền Admin</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <!-- POPUP NHẬP MÃ PIN ADMIN BÍ MẬT -->
+  <div class="pin-modal-overlay" id="pinModal">
+    <div class="pin-modal">
+      <div class="pin-title">🔐 Xác thực Quản Trị Viên</div>
+      <div style="font-size: 11px; color: #64748b; margin-bottom: 8px;">Nhập mã PIN để mở bảng cấu hình hoa hồng:</div>
+      <input type="password" id="adminPinInput" placeholder="Mã PIN (Mặc định: 8888)" />
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="cancelPinBtn">Hủy</button>
+        <button class="btn" id="confirmPinBtn">Mở Khóa</button>
+      </div>
+      <div id="pinError" style="font-size: 11px; color: #dc2626; margin-top: 6px; text-align: center;"></div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>

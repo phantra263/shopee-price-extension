@@ -1,0 +1,10 @@
+{
+  "name": "shopee-price-tracker-backend",
+  "version": "1.0.0",
+  "description": "Backend API phân tích lịch sử giá Shopee & chuyển hướng Affiliate cho TeaZ Extension",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
+
