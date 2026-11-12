@@ -34,42 +34,14 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // Lắng nghe messages từ content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // 1. Lấy dữ liệu phân tích giá
+  // Lấy dữ liệu phân tích giá
   if (message.type === "FETCH_PRICE_ANALYTICS") {
     handleFetchPriceAnalytics(message.payload)
       .then((data) => sendResponse({ ok: true, data }))
       .catch((error) => sendResponse({ ok: false, error: error.message }));
     return true;
   }
-
-  // 2. Kích hoạt Affiliate ngầm khi bấm nút Mua Ngay hoặc Thêm Vào Giỏ Hàng
-  if (message.type === "ACTIVATE_AFFILIATE") {
-    handleSilentAffiliateActivation(message.payload)
-      .then(() => sendResponse({ ok: true }))
-      .catch(() => sendResponse({ ok: false }));
-    return true;
-  }
 });
-
-// Kích hoạt Affiliate ngầm (gửi request ngầm mang cookie)
-async function handleSilentAffiliateActivation({ affiliateUrl, actionType }) {
-  if (!affiliateUrl) return;
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    // Gửi request ngầm để kích hoạt tracking/cookie
-    await fetch(affiliateUrl, {
-      method: "GET",
-      mode: "no-cors",
-      credentials: "include",
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-  } catch (err) {
-    // Không làm gián đoạn trải nghiệm người dùng
-  }
-}
 
 // Gọi API Backend phân tích giá
 async function handleFetchPriceAnalytics({ url, shopId, itemId }) {

@@ -27,9 +27,10 @@ const TEAZ_CONFIG = {
   adminPin: "8888",
 
   // ==========================================
-  // 3. HỆ THỐNG & BACKEND
+  // 3. HỆ THỐNG & BACKEND API (DEPLOY VERCEL)
   // ==========================================
-  apiUrl: "http://localhost:5000/api/track",
+  // Sau khi deploy backend lên Vercel, dán link Vercel của bạn vào đây:
+  apiUrl: "https://shopee-price-backend.vercel.app/api/track",
   enabled: true,
   notifEnabled: true
 };

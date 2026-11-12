@@ -1,5 +1,4 @@
-// scripts/generate-icons.js
-// Script tạo file PNG chuẩn (16x16, 48x48, 128x128) bằng thư viện zlib có sẵn của Node.js
+// backend/generate-icons.js - Tự động tạo icon16.png, icon48.png, icon128.png chuẩn PNG
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
@@ -38,43 +37,66 @@ function generatePng(size) {
   const width = size;
   const height = size;
 
-  // IHDR Chunk
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(width, 0);
   ihdr.writeUInt32BE(height, 4);
-  ihdr.writeUInt8(8, 8); // bit depth 8
+  ihdr.writeUInt8(8, 8); // 8-bit depth
   ihdr.writeUInt8(6, 9); // RGBA
-  ihdr.writeUInt8(0, 10); // compression
-  ihdr.writeUInt8(0, 11); // filter
-  ihdr.writeUInt8(0, 12); // interlace
+  ihdr.writeUInt8(0, 10);
+  ihdr.writeUInt8(0, 11);
+  ihdr.writeUInt8(0, 12);
 
-  // Raw Image Data (Filter byte 0 at start of each scanline)
   const rowSize = 1 + width * 4;
   const rawData = Buffer.alloc(rowSize * height);
 
-  const center = size / 2;
-  const radius = size * 0.46;
+  // Vẽ hình vuông bo góc màu cam (#ea580c)
+  const radius = Math.round(size * 0.22);
 
   for (let y = 0; y < height; y++) {
     const rowOffset = y * rowSize;
-    rawData[rowOffset] = 0; // Filter: None
+    rawData[rowOffset] = 0;
 
     for (let x = 0; x < width; x++) {
       const pxOffset = rowOffset + 1 + x * 4;
-      const dx = x - center;
-      const dy = y - center;
-      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist <= radius) {
-        // Màu cam thương hiệu Shopee / TeaZ: #ea580c (234, 88, 12)
-        // Viền bóng nhẹ ở rìa
-        const alpha = dist > radius - 1 ? Math.round(255 * (radius - dist)) : 255;
-        rawData[pxOffset] = 234;     // R
-        rawData[pxOffset + 1] = 88;  // G
-        rawData[pxOffset + 2] = 12;  // B
-        rawData[pxOffset + 3] = alpha; // A
+      // Tính khoảng cách bo góc
+      let inBounds = true;
+      if (x < radius && y < radius) {
+        inBounds = Math.hypot(x - radius, y - radius) <= radius;
+      } else if (x >= width - radius && y < radius) {
+        inBounds = Math.hypot(x - (width - radius - 1), y - radius) <= radius;
+      } else if (x < radius && y >= height - radius) {
+        inBounds = Math.hypot(x - radius, y - (height - radius - 1)) <= radius;
+      } else if (x >= width - radius && y >= height - radius) {
+        inBounds = Math.hypot(x - (width - radius - 1), y - (height - radius - 1)) <= radius;
+      }
+
+      if (inBounds) {
+        // Nền cam Shopee #ea580c (234, 88, 12)
+        let r = 234, g = 88, b = 12, a = 255;
+
+        // Vẽ biểu tượng tia sét / chữ S trắng ở giữa
+        const nx = x / size;
+        const ny = y / size;
+
+        // Họa tiết chữ S cách điệu màu trắng
+        const inS = (
+          (ny >= 0.25 && ny <= 0.35 && nx >= 0.28 && nx <= 0.72) ||
+          (ny >= 0.35 && ny <= 0.52 && nx >= 0.28 && nx <= 0.42) ||
+          (ny >= 0.45 && ny <= 0.55 && nx >= 0.28 && nx <= 0.72) ||
+          (ny >= 0.52 && ny <= 0.68 && nx >= 0.58 && nx <= 0.72) ||
+          (ny >= 0.65 && ny <= 0.75 && nx >= 0.28 && nx <= 0.72)
+        );
+
+        if (inS) {
+          r = 255; g = 255; b = 255;
+        }
+
+        rawData[pxOffset] = r;
+        rawData[pxOffset + 1] = g;
+        rawData[pxOffset + 2] = b;
+        rawData[pxOffset + 3] = a;
       } else {
-        // Nền trong suốt
         rawData[pxOffset] = 0;
         rawData[pxOffset + 1] = 0;
         rawData[pxOffset + 2] = 0;
@@ -102,6 +124,5 @@ if (!fs.existsSync(iconsDir)) {
 [16, 48, 128].forEach((size) => {
   const filePath = path.join(iconsDir, `icon${size}.png`);
   fs.writeFileSync(filePath, generatePng(size));
-  console.log(`Generated: ${filePath}`);
+  console.log(`[OK] Generated: ${filePath}`);
 });
-

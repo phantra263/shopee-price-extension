@@ -395,72 +395,6 @@
   }
 
   // ========================================================
-  // TỰ ĐỘNG CHẶN CLICK 2 NÚT CHÍNH SHOPEE (THÊM GIỎ HÀNG & MUA NGAY)
-  // ========================================================
-
-  function setupNativeButtonsInterceptor(settings) {
-    // Dùng capture phase để đón đầu sự kiện click trước khi vào code của Shopee
-    document.addEventListener(
-      "click",
-      (e) => {
-        const btn = e.target.closest("button, div[role='button']");
-        if (!btn) return;
-
-        // Tránh can thiệp các nút bên trong widget của chính mình
-        if (btn.closest("#teaz-price-tracker-widget")) return;
-
-        const text = (btn.textContent || "").toLowerCase().trim();
-        const ariaLabel = (btn.getAttribute("aria-label") || "").toLowerCase().trim();
-
-        const isAddToCart =
-          text.includes("thêm vào giỏ") ||
-          text.includes("add to cart") ||
-          ariaLabel.includes("thêm vào giỏ") ||
-          ariaLabel.includes("add to cart");
-
-        const isBuyNow =
-          (text.includes("mua ngay") || text.includes("buy now") || ariaLabel.includes("mua ngay")) &&
-          !text.includes("giá tốt"); // tránh trùng nút của widget
-
-        if (isAddToCart || isBuyNow) {
-          // Nếu đã chặn và vừa kích hoạt xong -> Cho phép click thật chạy tiếp
-          if (btn.dataset.teazIntercepted === "true") {
-            delete btn.dataset.teazIntercepted;
-            return;
-          }
-
-          // 1. Chặn sự kiện click hiện tại
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-
-          // 2. Cập nhật URL trình duyệt âm thầm mang thẻ UTM Affiliate (không tải lại trang)
-          const affiliateUrl = buildAffiliateUrl(window.location.href, settings);
-          try {
-            window.history.replaceState(null, "", affiliateUrl);
-          } catch (err) { }
-
-          // 3. Gửi request ngầm kích hoạt tracking/cookie Affiliate
-          chrome.runtime.sendMessage({
-            type: "ACTIVATE_AFFILIATE",
-            payload: {
-              affiliateUrl,
-              actionType: isBuyNow ? "BUY_NOW" : "ADD_TO_CART"
-            }
-          });
-
-          // 4. Trì hoãn 200–250ms rồi cho phép hành động Shopee diễn ra bình thường
-          setTimeout(() => {
-            btn.dataset.teazIntercepted = "true";
-            btn.click();
-          }, 220);
-        }
-      },
-      true // Capture phase: Bắt trước React / Shopee DOM handlers
-    );
-  }
-
-  // ========================================================
   // RENDER WIDGET TRÊN TRANG SẢN PHẨM
   // ========================================================
 
@@ -564,25 +498,12 @@
       </div>
     `;
 
-    // Nút Mua Ngay trên widget: Tự động bấm vào nút 'Mua Ngay' của chính Shopee
+    // Nút Mua Ngay trên widget: Mở trang sản phẩm với mức giá tốt nhất kèm tracking
     const widgetBuyBtn = widget.querySelector("#teaz-widget-buy-now-btn");
     if (widgetBuyBtn) {
       widgetBuyBtn.addEventListener("click", () => {
-        const allButtons = Array.from(document.querySelectorAll("button, div[role='button']"));
-        const shopeeBuyBtn = allButtons.find((btn) => {
-          if (btn.closest("#teaz-price-tracker-widget")) return false;
-          const t = (btn.textContent || "").toLowerCase().trim();
-          const aria = (btn.getAttribute("aria-label") || "").toLowerCase().trim();
-          return (t.includes("mua ngay") || aria.includes("mua ngay")) && btn.offsetWidth > 0;
-        });
-
-        if (shopeeBuyBtn) {
-          shopeeBuyBtn.click();
-        } else {
-          // Fallback nếu không tìm thấy nút Mua Ngay
-          const affiliateUrl = buildAffiliateUrl(window.location.href, settings);
-          window.location.href = affiliateUrl;
-        }
+        const affiliateUrl = buildAffiliateUrl(window.location.href, settings);
+        window.location.href = affiliateUrl;
       });
     }
 
@@ -672,9 +593,6 @@
     chrome.storage.sync.get(DEFAULT_SETTINGS, async (settings) => {
       try {
         if (settings.enabled === false) return;
-
-        // Khởi động bộ bắt sự kiện 2 nút chính của Shopee
-        setupNativeButtonsInterceptor(settings);
 
         const watched = await isProductWatched(ids.itemId);
 

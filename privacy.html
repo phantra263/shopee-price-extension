@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chính Sách Quyền Riêng Tư - Shopee Price History & Fake Sale Detector</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.65;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+    .card {
+      background: #ffffff;
+      padding: 36px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e2e8f0;
+    }
+    h1 { color: #ea580c; font-size: 22px; margin-top: 0; }
+    h2 { font-size: 16px; color: #0f172a; margin-top: 24px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+    p, li { font-size: 14px; color: #475569; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #0f172a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Chính Sách Quyền Riêng Tư (Privacy Policy)</h1>
+    <p><i>Cập nhật lần cuối: Tháng 11/2026</i></p>
+
+    <h2>1. Thu thập & Sử dụng Dữ liệu</h2>
+    <p>Tiện ích <b>Shopee Price History & Fake Sale Detector</b> ("chúng tôi") cam kết bảo vệ quyền riêng tư của bạn:</p>
+    <ul>
+      <li><b>Không thu thập thông tin cá nhân:</b> Tiện ích không thu thập, không lưu trữ và không bán bất kỳ thông tin nhận dạng cá nhân nào (tên, email, mật khẩu, thẻ thanh toán, lịch sử duyệt web).</li>
+      <li><b>Dữ liệu giá sản phẩm:</b> Tiện ích chỉ đọc thông tin ID sản phẩm và mức giá công khai trên trang <code>shopee.vn</code> để tính toán lịch sử giá và phát hiện tăng giá ảo trước sale.</li>
+      <li><b>Lưu trữ cục bộ:</b> Danh sách sản phẩm bạn chọn canh giá đáy (Watchlist) được lưu hoàn toàn trên bộ nhớ trình duyệt của bạn (<code>chrome.storage.local</code>) và không bao giờ được gửi ra ngoài.</li>
+    </ul>
+
+    <h2>2. Giải trình Quyền hạn (Permissions Justification)</h2>
+    <ul>
+      <li><code>storage</code>: Lưu danh sách sản phẩm theo dõi giá đáy tại máy người dùng.</li>
+      <li><code>alarms</code>: Chạy tác vụ định kỳ kiểm tra giá sản phẩm trong danh sách theo dõi.</li>
+      <li><code>notifications</code>: Bắn thông báo lên màn hình khi sản phẩm đạt mức giá đáy mục tiêu.</li>
+      <li><code>host_permissions</code> (<code>https://shopee.vn/*</code>, <code>https://*.vercel.app/*</code>): Hiển thị bảng phân tích giá trên trang Shopee và kết nối API biểu đồ giá.</li>
+    </ul>
+
+    <h2>3. Minh bạch Tiếp thị liên kết (Affiliate Disclosure)</h2>
+    <p>Tuân thủ chính sách của Google Chrome Web Store: Tiện ích có chứa các liên kết tiếp thị liên kết (ví dụ khi người dùng bấm vào các nút <i>"Mua Ngay Giá Tốt Nhất"</i> hoặc <i>"Mở Kho Voucher Shopee"</i>). Nếu bạn hoàn tất đơn hàng qua các liên kết này, chúng tôi có thể nhận được một khoản hoa hồng nhỏ mà <b>không làm tăng bất kỳ chi phí nào đối với bạn</b>.</p>
+
+    <h2>4. Liên hệ</h2>
+    <p>Mọi thắc mắc xin vui lòng mở Issue tại kho lưu trữ GitHub: <br/>
+    <a href="https://github.com/phantra263/shopee-price-extension" target="_blank">https://github.com/phantra263/shopee-price-extension</a></p>
+  </div>
+</body>
+</html>
+
